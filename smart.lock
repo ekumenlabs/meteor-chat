@@ -1,0 +1,21 @@
+{
+  "meteor": {},
+  "dependencies": {
+    "basePackages": {
+      "presence": {},
+      "streams": {}
+    },
+    "packages": {
+      "presence": {
+        "git": "https://github.com/tmeasday/meteor-presence.git",
+        "tag": "v0.2.2",
+        "commit": "1fb5e681a965a5cf7b530992409eee265abaa0ad"
+      },
+      "streams": {
+        "git": "https://github.com/arunoda/meteor-streams.git",
+        "tag": "v0.1.12",
+        "commit": "d587ad9f5babbc267f026f41362f235809c931fc"
+      }
+    }
+  }
+}
