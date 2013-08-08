@@ -1,0 +1,17 @@
+/* CSS declarations go here */
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+li {
+  padding-top: 10px;
+}
+
+.items div {
+  display: inline-block;
+  padding: 5px;
+}
