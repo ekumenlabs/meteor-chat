@@ -1,13 +1,12 @@
-Messages = new Meteor.Collection("msgs");
 ChatStream = new Meteor.Stream('chat');
 PrivateMessages = new Meteor.Collection(null);
 
-function getFriendlyName(userid) {
-  if (userid) {
-    var user = Meteor.users.findOne(userid);
-    if (user) {
-      return user.username || user.profile.name || user.facebook.first_name || user.services.google.name;
+function getFriendlyName(user) {
+  if (user) {
+    if (user._id == Meteor.userId()) {
+      return 'me';
     }
+    return user.username || user.profile.name || user.facebook.first_name || user.services.google.name;
   }
   return 'anonymous';
 }
@@ -45,56 +44,34 @@ function getIcon(userid, res) {
   return "http://placekitten.com/" + res + "/" + res;
 }
 
+function isOnline(userid) {
+  var presence = Meteor.presences.findOne({userId: userid});
+  if (presence) {
+    return presence.state == 'online';
+  } else {
+    return false;
+  }
+}
+
+// ----------------------------------------------------------------------
+// Client code
+
 if (Meteor.isClient) {
   // subscribe to these collections
-  Meteor.subscribe('msgs');
   Meteor.subscribe('users');
   Meteor.subscribe('userPresence');
 
-  Template.chat.events({
-    'submit' : function () {
-      // template data, if any, is available in 'this'
-      
-      var text = msg.value;
-      msg.value = '';
-
-      console.log('Inserting message from:', Meteor.user(), Meteor.userId());
-      var info = {text: text, from: Meteor.userId()};
-      if (Session.get('selected_user') !== null) {
-        info.to = Session.get('selected_user');
-      }
-      sendChatMessage(info);
-//      Messages.insert(info);
-
-      // Put focus back in input box
-      msg.focus();
-    }
-  });
-
-  Template.chat.msgs = function() {
-    return Messages.find().fetch();
-  };
-
-  Template.msg.author = function() {
-    return getFriendlyName(this.from || this.userid);
-  };
-
-  Template.msg.icon = function() {
-    return getIcon(this.from || this.userid, 32);
-  };
-
-  Template.msg.friendlyto = function() {
-    return getFriendlyName(this.to);
-  };
-
-  Template.msg.events({
-    'click .delete': function() {
-      Messages.remove(this._id);
-    }
-  });
-
   Template.users.users = function() {
     return Meteor.users.find().fetch();
+  };
+
+  Template.users.videoDisabled = function() {
+    var selected = Session.get('selected_user');
+    if (selected && isOnline(selected) && !Session.equals('selected_user', Meteor.userId())) {
+      return "active";
+    } else {
+      return "disabled";
+    }
   };
 
   Session.set('selected_user', null);
@@ -106,6 +83,13 @@ if (Meteor.isClient) {
       } else {
         Session.set('selected_user', this._id);
       }
+    },
+
+    'mouseup #startVideo': function() {
+      var tag = $('#startVideo');
+      // Ignore clicks if we are disabled
+      if (tag.hasClass('disabled')) return;
+      startVideoChat();
     }
   });
 
@@ -131,24 +115,35 @@ if (Meteor.isClient) {
   };
 
   Template.user.online = function() {
-    var presence = Meteor.presences.findOne({userId: this._id});
-    if (presence) {
-      return presence.state == 'online';
-    } else {
-      return false;
-    }
+    return isOnline(this._id);
   };
 
   // Client-to-client messaging
   sendChatMessage = function(info) {
     ChatStream.emit('message', info);
-    console.log('I sent:', info.text);
+//    console.log('I sent:', info.text);
   };
 
   ChatStream.on('message', function(data) {
-    console.log(getEmail(data.from), 'sent', data.text);
+    // TODO: move this filtering to the server
+    if (data.to != Meteor.userId()) {
+      console.log('Ignoring msg to', data.to, 'I am', Meteor.userId());
+    }
+
+    var from = Meteor.users.findOne(data.from);
+    console.log(getEmail(from), 'sent', data.text);
   });
+
+  startVideoChat = function() {
+    var target = Session.get('selected_user');
+    console.log('Starting video with', getEmail(target));
+    sendChatMessage({text: 'I want to start a chat with you', from: Meteor.userId(), to: target});
+  };
 }
+
+
+// ----------------------------------------------------------------------
+// Server code
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
@@ -156,9 +151,6 @@ if (Meteor.isServer) {
   });
 
   /* We don't need this because we have autopublish turned on */
-  Meteor.publish('msgs', function() {
-    return Messages.find();
-  });
   Meteor.publish('users', function() {
     return Meteor.users.find();
   });

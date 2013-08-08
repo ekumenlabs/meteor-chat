@@ -16,40 +16,10 @@
     </div>
 
     <div class="container-fluid">
-      {{> chat}}
       {{> users}}
+      {{> video}}
     </div><!-- /.container -->
 </body>
-
-<template name="chat">
-  <h1>Chat window!</h1>
-
-  {{#if currentUser}}
-    <form action="#">
-      Type here: <input id="msg" type="text"/>
-    </form>
-  {{else}}
-    <p>
-      Log in to post messages!
-    </p>
-  {{/if}}
-
-  <h3>Messages:</h3>
-  <ul class="unstyled">
-  {{#each msgs}}
-    {{> msg}}
-  {{/each}}
-  </ul>
-</template>
-
-<template name="msg">
-  <li><img height="32" width="32" src="{{icon}}"><b>{{author}}
-    {{#if to}}
-      -&gt; {{friendlyto}}
-    {{/if}}
-    :</b>
-    {{text}} <a href="#" class="delete">[X]</a>
-</template>
 
 <template name="users">
   <h3>Users:</h3>
@@ -58,6 +28,8 @@
       {{> user}}
     {{/each}}
   </ul>
+
+  <button class="btn btn-primary {{videoDisabled}}" id="startVideo">Click to start video chat</button>
 </template>
 
 <template name="user">
@@ -70,4 +42,7 @@
       <span class="label">{{status}}</span>
     {{/if}}
   </div>
+</template>
+
+<template name="video">
 </template>
