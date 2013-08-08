@@ -1,11 +1,28 @@
 Messages = new Meteor.Collection("msgs");
-// chatStream = new Meteor.Stream('chat');
+ChatStream = new Meteor.Stream('chat');
+PrivateMessages = new Meteor.Collection(null);
 
 function getFriendlyName(userid) {
   if (userid) {
     var user = Meteor.users.findOne(userid);
     if (user) {
       return user.username || user.profile.name || user.facebook.first_name || user.services.google.name;
+    }
+  }
+  return 'anonymous';
+}
+
+function getEmail(userid) {
+  if (userid) {
+    var user = Meteor.users.findOne(userid);
+    if (user) {
+      if (user.services.github) {
+        return user.services.github.email;
+      } else if (user.services.google) {
+        return user.services.google.email;
+      } else if (user.services.facebook) {
+        return user.services.facebook.email;
+      }
     }
   }
   return 'anonymous';
@@ -41,18 +58,14 @@ if (Meteor.isClient) {
       var text = msg.value;
       msg.value = '';
 
-/*
-      var from = Meteor.userId();
-      var to = Template.users.selectedUserId;
-      sendChatMessage(from, to, text);
-    */
-
       console.log('Inserting message from:', Meteor.user(), Meteor.userId());
-      var info = {text: text, userid: Meteor.userId()};
+      var info = {text: text, from: Meteor.userId()};
       if (Session.get('selected_user') !== null) {
         info.to = Session.get('selected_user');
       }
-      Messages.insert(info);
+      sendChatMessage(info);
+//      Messages.insert(info);
+
       // Put focus back in input box
       msg.focus();
     }
@@ -63,11 +76,11 @@ if (Meteor.isClient) {
   };
 
   Template.msg.author = function() {
-    return getFriendlyName(this.userid);
+    return getFriendlyName(this.from || this.userid);
   };
 
   Template.msg.icon = function() {
-    return getIcon(this.userid, 32);
+    return getIcon(this.from || this.userid, 32);
   };
 
   Template.msg.friendlyto = function() {
@@ -126,17 +139,15 @@ if (Meteor.isClient) {
     }
   };
 
-/*
   // Client-to-client messaging
-  sendChatMessage = function(from, to, msg) {
-    chatStream.emit('message', {from: from, to: to, msg: msg});
-    console.log('I sent:', msg);
+  sendChatMessage = function(info) {
+    ChatStream.emit('message', info);
+    console.log('I sent:', info.text);
   };
 
-  chatStream.on('message', function(data) {
-    console.log('user: ', data.msg);
+  ChatStream.on('message', function(data) {
+    console.log(getEmail(data.from), 'sent', data.text);
   });
-*/
 }
 
 if (Meteor.isServer) {
