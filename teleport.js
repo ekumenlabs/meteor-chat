@@ -155,7 +155,6 @@ if (Meteor.isServer) {
   Meteor.publish('userPresence', function() {
     // For now we'll just publish presence on everyone who's ever logged in
     var filter = {};
-    console.log('Publishing userPresence', Meteor.presences.find().count());
     return Meteor.presences.find(filter, {fields: {state: true, userId: true}});
   });
 }

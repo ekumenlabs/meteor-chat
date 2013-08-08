@@ -9,5 +9,4 @@ bootstrap
 accounts-ui
 accounts-facebook
 accounts-google
-autopublish
 accounts-github
