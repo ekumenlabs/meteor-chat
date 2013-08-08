@@ -43,12 +43,17 @@
 </template>
 
 <template name="msg">
-  <li><img height="32" width="32" src="{{icon}}"><b>{{author}}:</b> {{text}} <a href="#" class="delete">[X]</a>
+  <li><img height="32" width="32" src="{{icon}}"><b>{{author}}
+    {{#if to}}
+      -&gt; {{friendlyto}}
+    {{/if}}
+    :</b>
+    {{text}} <a href="#" class="delete">[X]</a>
 </template>
 
 <template name="users">
   <h3>Users:</h3>
-  <ul class="thumbnails items inline big">
+  <ul id="userlist" class="thumbnails items inline big">
     {{#each users}}
       {{> user}}
     {{/each}}
@@ -56,7 +61,7 @@
 </template>
 
 <template name="user">
-  <div>
+  <div class="user {{selected}}">
     <img height="64" width="64" src="{{icon}}"><br>
     {{friendlyname}}<br>
     {{#if online}}

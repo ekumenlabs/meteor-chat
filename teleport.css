@@ -15,3 +15,7 @@ li {
   display: inline-block;
   padding: 5px;
 }
+
+#userlist .selected {
+  background: #9be;
+}

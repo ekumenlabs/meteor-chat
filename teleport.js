@@ -1,8 +1,21 @@
 Messages = new Meteor.Collection("msgs");
 // chatStream = new Meteor.Stream('chat');
 
+function getFriendlyName(userid) {
+  if (userid) {
+    var user = Meteor.users.findOne(userid);
+    if (user) {
+      return user.username || user.profile.name || user.facebook.first_name || user.services.google.name;
+    }
+  }
+  return 'anonymous';
+}
+
 if (Meteor.isClient) {
+  // subscribe to these collections
   Meteor.subscribe('msgs');
+  Meteor.subscribe('users');
+  Meteor.subscribe('userPresence');
 
   Template.chat.events({
     'submit' : function () {
@@ -18,7 +31,11 @@ if (Meteor.isClient) {
     */
 
       console.log('Inserting message from:', Meteor.user(), Meteor.userId());
-      Messages.insert({text: text, userid: Meteor.userId()});
+      var info = {text: text, userid: Meteor.userId()};
+      if (Session.get('selected_user') !== null) {
+        info.to = Session.get('selected_user');
+      }
+      Messages.insert(info);
       // Put focus back in input box
       msg.focus();
     }
@@ -29,13 +46,7 @@ if (Meteor.isClient) {
   };
 
   Template.msg.author = function() {
-    if (this.userid) {
-      var user = Meteor.users.findOne(this.userid);
-      if (user) {
-        return user.username || user.profile.name || user.facebook.first_name || user.services.google.name;
-      }
-    }
-    return 'anonymous';
+    return getFriendlyName(this.userid);
   };
 
   Template.msg.icon = function() {
@@ -52,6 +63,10 @@ if (Meteor.isClient) {
     return "http://placekitten.com/32/32";
   };
 
+  Template.msg.friendlyto = function() {
+    return getFriendlyName(this.to);
+  };
+
   Template.msg.events({
     'click .delete': function() {
       Messages.remove(this._id);
@@ -61,6 +76,18 @@ if (Meteor.isClient) {
   Template.users.users = function() {
     return Meteor.users.find().fetch();
   };
+
+  Session.set('selected_user', null);
+
+  Template.users.events({
+    'mousedown .user': function() {
+      if (Session.equals('selected_user', this._id)) {
+        Session.set('selected_user', null);
+      } else {
+        Session.set('selected_user', this._id);
+      }
+    }
+  });
 
   Template.user.icon = function() {
     if (this && this.services) {
@@ -74,8 +101,7 @@ if (Meteor.isClient) {
   };
 
   Template.user.friendlyname = function() {
-    return this.thisname || this.profile.name || this.facebook.first_name || this.services.google.name ||
-      "anonymous";
+    return getFriendlyName(this);
   };
 
   Template.user.status = function() {
@@ -85,6 +111,10 @@ if (Meteor.isClient) {
     } else {
       return 'offline';
     }
+  };
+
+  Template.user.selected = function() {
+    return Session.equals('selected_user', this._id) ? 'selected' : '';
   };
 
   Template.user.online = function() {
@@ -115,15 +145,17 @@ if (Meteor.isServer) {
   });
 
   /* We don't need this because we have autopublish turned on */
-  /*
   Meteor.publish('msgs', function() {
     return Messages.find();
   });
-  */
+  Meteor.publish('users', function() {
+    return Meteor.users.find();
+  });
 
   Meteor.publish('userPresence', function() {
     // For now we'll just publish presence on everyone who's ever logged in
     var filter = {};
+    console.log('Publishing userPresence', Meteor.presences.find().count());
     return Meteor.presences.find(filter, {fields: {state: true, userId: true}});
   });
 }
