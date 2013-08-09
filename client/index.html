@@ -45,8 +45,14 @@
 </template>
 
 <template name="video">
-  <div class="videoContainer">
-    <video class="theirVideo" src="{{theirVideo}}" autoplay="autoplay"></video>
-    <video class="myVideo" autoplay="true" muted="muted"></video>
+  <div class="{{inVideoChat}}">
+    <div class="videoContainer">
+      {{#constant}}
+      <video id="theirVideo" class="theirVideo" autoplay="autoplay"></video>
+      <video id="myVideo" class="myVideo" autoplay="autoplay" muted="muted"></video>
+      {{/constant}}
+    </div>
+
+    <button id="endVideo" class="btn btn-primary">End video chat</button>
   </div>
 </template>

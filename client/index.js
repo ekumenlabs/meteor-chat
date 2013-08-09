@@ -1,3 +1,6 @@
+Session.set('myVideoSrc', '');
+Session.set('inVideoChat', false);
+
 Template.users.users = function() {
   return Meteor.users.find().fetch();
 };
@@ -25,9 +28,27 @@ Template.users.events({
     var tag = $('#startVideo');
     // Ignore clicks if we are disabled
     if (tag.hasClass('disabled')) return;
-    startVideoChat();
+    Session.set('inVideoChat', true);
+    startVideoChat(Session.get('selected_user'));
+  },
+});
+
+Template.video.inVideoChat = function() {
+  return Session.get('inVideoChat') ? 'videochat-show' : 'videochat-hide';
+};
+
+Template.video.events({
+  'mouseup #endVideo': function() {
+    endVideoChat();
+    console.log('setting inVideoChat to false');
+    Session.set('inVideoChat', false);
   }
 });
+
+Template.video.myVideoSrc = function() {
+  console.log('Returning myVideoSrc:', Session.get('myVideoSrc'));
+  return Session.get('myVideoSrc');
+};
 
 Template.user.icon = function() {
   return getIcon(this, 64);
