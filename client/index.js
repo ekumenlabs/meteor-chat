@@ -29,7 +29,7 @@ Template.users.events({
     // Ignore clicks if we are disabled
     if (tag.hasClass('disabled')) return;
     Session.set('inVideoChat', true);
-    startVideoChat(Session.get('selected_user'));
+    startVideoChat(Session.get('selected_user'), true);
   },
 });
 

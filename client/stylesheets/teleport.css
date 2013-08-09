@@ -29,7 +29,7 @@ li {
 
 /* For the video containers */
 
-.theirVideo {
+.myVideo {
   position: absolute;
   height: 30%;
   width: 30%;
@@ -47,11 +47,11 @@ li {
   max-height: 100%;
 }
 
-.myVideo {
-  width: 50%;
-  max-width: 50%;
+.theirVideo {
+  width: 80%;
+  max-width: 80%;
   height: auto;
-  max-height: 50%;
+  max-height: 80%;
 }   
 
 .videochat-show {

@@ -56,9 +56,4 @@ hasGetUserMedia = function() {
             navigator.mozGetUserMedia || navigator.msGetUserMedia));
 };
 
-// Client-to-client messaging
-sendChatMessage = function(info) {
-  ChatStream.emit('message', info);
-};
-
 
