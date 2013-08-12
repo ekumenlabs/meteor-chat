@@ -20,7 +20,7 @@ startVideoChat = function(target, amCaller) {
   Session.set('inVideoChat', true);
   Session.set('chattingWith', target);
 
-  console.log('Starting video with', getEmail(target));
+//  console.log('Starting video with', getEmail(target));
 
   // I need to move this check sooner so it doesn't happen *after* you receive a call
   if (hasGetUserMedia()) {
@@ -33,7 +33,7 @@ startVideoChat = function(target, amCaller) {
   var config = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
   this.pc = new webkitRTCPeerConnection(config);
   this.pc.onicecandidate = function(evt) {
-    console.log('Found candidate:', evt.candidate);
+//    console.log('Found candidate:', evt.candidate);
     if (evt.candidate) {
       sendChatMessage(target, {'candidate': evt.candidate});
     }
@@ -43,7 +43,7 @@ startVideoChat = function(target, amCaller) {
     var theirVideo = document.querySelector('#theirVideo');
     // this might need to be window.URL.createObjectURL
     theirVideo.src = URL.createObjectURL(evt.stream);
-    console.log('Displaying their video in the stream:', evt.stream);
+//    console.log('Displaying their video in the stream:', evt.stream);
   };
 
   this.pc.onremovestream = function(streamid, video) {
@@ -61,7 +61,7 @@ startVideoChat = function(target, amCaller) {
       // If we're the caller
       this.pc.createOffer(gotDescription);
     } else {
-      console.log('Creating answer for remote caller', this.pc.remoteDescription);
+//      console.log('Creating answer for remote caller', this.pc.remoteDescription);
       this.pc.createAnswer(gotDescription);
     }
 
@@ -72,7 +72,7 @@ startVideoChat = function(target, amCaller) {
 
     // Display my video in the UI
     var video = document.querySelector('#myVideo');
-    console.log('Displaying my own video in the UI:', stream);
+//    console.log('Displaying my own video in the UI:', stream);
     video.src = window.URL.createObjectURL(stream);
   }, onFailSoHard);
 };
@@ -81,7 +81,7 @@ startVideoChat = function(target, amCaller) {
 // Tear down the WebRTC connection
 
 endVideoChat = function() {
-  console.log('Ending video chat');
+//  console.log('Ending video chat');
   Session.set('inVideoChat', false);
   if (this.localMediaStream) {
     this.localMediaStream.stop();
@@ -116,13 +116,13 @@ receiveChatMessage = function(data) {
   if (msg.sdp) {
     if (!this.pc) {
       // I am receiving a call
-      console.log('Starting video chat as receiver');
+//      console.log('Starting video chat as receiver');
       startVideoChat(from, false);
     }
-    console.log('Setting remote description', msg.sdp);
+//    console.log('Setting remote description', msg.sdp);
     this.pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
   } else if (msg.candidate) {
-    console.log('Message contains a candidate:', msg.candidate);
+//    console.log('Message contains a candidate:', msg.candidate);
     this.pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
   } else if (msg.endchat) {
     endVideoChat();
