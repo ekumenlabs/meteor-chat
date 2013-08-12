@@ -29,7 +29,15 @@
     {{/each}}
   </ul>
 
-  <button class="btn btn-primary {{videoDisabled}}" id="startVideo">Click to start video chat</button>
+  {{#if currentUser}}
+    {{#if selectedUser}}
+      <button class="btn btn-primary {{videoDisabled}}" id="startVideo">Click to start video chat</button>
+    {{else}}
+      Select someone online above
+    {{/if}}
+  {{else}}
+  Log in to enable video chat
+  {{/if}}
 </template>
 
 <template name="user">

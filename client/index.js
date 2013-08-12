@@ -14,6 +14,10 @@ Template.users.videoDisabled = function() {
   }
 };
 
+Template.users.selectedUser = function() {
+  var selected = Session.get('selected_user');
+  return (selected && isOnline(selected) && !Session.equals('selected_user', Meteor.userId()));
+};
 
 Template.users.events({
   'mousedown .user': function() {
