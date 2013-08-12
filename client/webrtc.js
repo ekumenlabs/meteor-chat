@@ -16,8 +16,13 @@ function onFailSoHard(err) {
 // Initialize a WebRTC connection
 
 startVideoChat = function(target, amCaller) {
+  // This unhides the video elements on the page
+  Session.set('inVideoChat', true);
+  Session.set('chattingWith', target);
+
   console.log('Starting video with', getEmail(target));
 
+  // I need to move this check sooner so it doesn't happen *after* you receive a call
   if (hasGetUserMedia()) {
     // Good to go!
   } else {
@@ -28,7 +33,7 @@ startVideoChat = function(target, amCaller) {
   var config = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
   this.pc = new webkitRTCPeerConnection(config);
   this.pc.onicecandidate = function(evt) {
-//    console.log('Found candidate:', evt.candidate);
+    console.log('Found candidate:', evt.candidate);
     if (evt.candidate) {
       sendChatMessage(target, {'candidate': evt.candidate});
     }
@@ -39,6 +44,10 @@ startVideoChat = function(target, amCaller) {
     // this might need to be window.URL.createObjectURL
     theirVideo.src = URL.createObjectURL(evt.stream);
     console.log('Displaying their video in the stream:', evt.stream);
+  };
+
+  this.pc.onremovestream = function(streamid, video) {
+    console.log('Remote stream removed -- maybe they hung up?');
   };
 
   // Get our local video stream and send it
@@ -71,8 +80,21 @@ startVideoChat = function(target, amCaller) {
 // ----------------------------------------------------------------------
 // Tear down the WebRTC connection
 
-endVideoChat = function(callee) {
-  this.localMediaStream.stop();
+endVideoChat = function() {
+  console.log('Ending video chat');
+  Session.set('inVideoChat', false);
+  if (this.localMediaStream) {
+    this.localMediaStream.stop();
+    this.localMediaStream = null;
+  }
+  // Send a message to my peer saying we're done
+  var peerid = Session.get('chattingWith');
+  if (peerid) {
+    sendChatMessage(peerid, {endchat: true});
+    Session.set('chattingWith', null);
+  }
+
+  this.pc = null;
 };
 
 // ----------------------------------------------------------------------
@@ -91,16 +113,16 @@ receiveChatMessage = function(data) {
   var to = data.to;
   var msg = data.msg;
 
-  if (!this.pc) {
-    // I am receiving a call
-    startVideoChat(from, false);
-  }
-
   if (msg.sdp) {
-//    console.log('Message contains an SDP');
+    if (!this.pc) {
+      // I am receiving a call
+      console.log('Starting video chat as receiver');
+      startVideoChat(from, false);
+    }
+    console.log('Setting remote description', msg.sdp);
     this.pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
   } else if (msg.candidate) {
-//    console.log('Message contains a candidate:', msg.candidate);
+    console.log('Message contains a candidate:', msg.candidate);
     this.pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
   } else if (msg.endchat) {
     endVideoChat();
