@@ -1,6 +1,7 @@
 {
   "packages": {
     "presence": {},
-    "streams": {}
+    "streams": {},
+    "router": {}
   }
 }

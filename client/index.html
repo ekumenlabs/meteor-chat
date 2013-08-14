@@ -1,25 +1,74 @@
 <head>
-  <title>Meteor test</title>
+  <title>Telepresence</title>
 </head>
 
 <body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="brand" href="#">Meteor test</a>
-          <div class="pull-right navbar-text">
+  {{> navbar}}
+
+    <div class="container-fluid">
+      {{renderPage}}
+    </div><!-- /.container -->
+</body>
+
+<template name="navbar">
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="#">Telepresence</a>
+        <div class="pull-right navbar-text">
+          {{#if selectedRobot}}
+            Robot tablet for {{selectedRobot}} / <a class="logout"> Change </a>
+          {{else}}
             {{loginButtons align="right"}}
-          </div>
+          {{/if}}
         </div>
       </div>
     </div>
+  </div>
+</template>
 
-    <div class="container-fluid">
-      {{> users}}
-      {{> video}}
-    </div><!-- /.container -->
-</body>
+<template name="main">
+  {{#if userIsNotRobot}}
+    {{> users}}
+    {{> video}}
+  {{else}}
+    {{> tabletChoose}}
+  {{/if}}
+</template>
+
+<template name="tabletChoose">
+  {{#if selectedRobot}}
+    {{> robotVideo}}
+  {{else}}
+    <h2>Choose a robot:</h2>
+
+    <ul class="unstyled mobile">
+      {{#each robots}}
+        {{> robot}}
+      {{/each}}
+    </ul>
+  {{/if}}
+</template>
+
+<template name="robot">
+<li class="robot"><a>{{name}}</a>
+</template>
+
+<template name="robotVideo">
+  {{> video}}
+
+  <div class="{{notInVideoChat}}">
+    {{#constant}}
+    <video class="eyes"
+      src="http://babylon1.willowgarage.com/binfrastructure/eyes-cropped.mp4"
+      loop="loop"
+      autoplay="autoplay"
+      >
+      </video>
+    {{/constant}}
+  </div>
+</template>
 
 <template name="users">
   <h3>Users:</h3>

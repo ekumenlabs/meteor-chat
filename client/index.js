@@ -1,5 +1,14 @@
+// Initialize state variables
 Session.set('myVideoSrc', '');
 Session.set('inVideoChat', false);
+Session.set('selectedRobot', null);
+Session.set('selectedUser', null);
+
+// Router
+Meteor.Router.add({
+  '/': 'main',
+  '/tablet': 'tablet'
+});
 
 Template.users.users = function() {
   return Meteor.users.find().fetch();
@@ -20,7 +29,7 @@ Template.users.selectedUser = function() {
 };
 
 Template.users.events({
-  'mousedown .user': function() {
+  'mouseup .user': function() {
     if (Session.equals('selected_user', this._id)) {
       Session.set('selected_user', null);
     } else {
@@ -78,4 +87,50 @@ Template.user.online = function() {
   return isOnline(this._id);
 };
 
+/* ---------------------------------------------------------------------- */
+// Selecting a robot
 
+Template.navbar.selectedRobot = function() {
+  return Session.get('selectedRobot');
+};
+
+Template.navbar.events({
+  'mouseup .logout': function() {
+    Session.set('selectedRobot', null);
+    Meteor.logout();
+  }
+});
+
+Template.tabletChoose.robots = function() {
+  return Robots.find().fetch();
+};
+
+Template.tabletChoose.selectedRobot = function() {
+  return Session.get('selectedRobot');
+};
+
+Template.robot.events({
+  'mouseup': function() {
+    Session.set('selectedRobot', this.name);
+    Meteor.loginWithPassword(this.name, this.name);
+  },
+});
+
+/* Workaround because Meteor causes autoplay not to work.
+   See http://stackoverflow.com/questions/13851118/audio-file-does-not-autoplay-within-template */
+Template.robotVideo.rendered = function() {
+  var eyes = document.querySelector('.eyes');
+  eyes.play();
+};
+
+Template.robotVideo.inVideoChat = function() {
+  return Session.get('inVideoChat');
+};
+Template.robotVideo.notInVideoChat = function() {
+  return !Session.get('inVideoChat');
+};
+
+Template.main.userIsNotRobot = function() {
+  var user = Meteor.user();
+  return (user && !user.profile.robot);
+};

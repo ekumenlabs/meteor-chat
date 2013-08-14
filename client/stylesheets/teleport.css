@@ -8,6 +8,7 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  background: #fcfcfa;
 }
 .starter-template {
   padding: 40px 15px;
@@ -63,3 +64,38 @@ li {
 }
 
 /* End video containers */
+
+/* ---------------------------------------------------------------------- */
+/* Robot eyes */
+.eyes {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 250px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Lists */
+
+li a {
+  color: #0088cc;
+  text-decoration: none;
+}
+
+.mobile > li:nth-child(even) {
+  background: #FFF;
+}
+
+.mobile > li:nth-child(odd) {
+  background: #EEE;
+}
+
+.mobile > li {
+  padding: 20px 20px 20px 20px;
+  border-bottom-color: rgb(221, 221, 221);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  font-weight:bold;
+  line-height: 26px;
+  font-size: 20px;
+}
