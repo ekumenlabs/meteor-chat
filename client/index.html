@@ -17,8 +17,8 @@
       <div class="container-fluid">
         <a class="brand" href="#">Telepresence</a>
         <div class="pull-right navbar-text">
-          {{#if selectedRobot}}
-            Robot tablet for {{selectedRobot}} / <a class="logout"> Change </a>
+          {{#if loggedInAsRobot}}
+            Robot tablet for {{currentUser.username}} / <a class="logout"> Change </a>
           {{else}}
             {{loginButtons align="right"}}
           {{/if}}
@@ -38,7 +38,7 @@
 </template>
 
 <template name="tabletChoose">
-  {{#if selectedRobot}}
+  {{#if loggedInAsRobot}}
     {{> robotVideo}}
   {{else}}
     <h2>Choose a robot:</h2>
@@ -52,7 +52,7 @@
 </template>
 
 <template name="robot">
-<li class="robot"><a>{{name}}</a>
+<li class="robot"><a>{{username}}</a>
 </template>
 
 <template name="robotVideo">
@@ -73,7 +73,7 @@
 <template name="users">
   <h3>Users:</h3>
   <ul id="userlist" class="thumbnails items inline big">
-    {{#each users}}
+    {{#each robots}}
       {{> user}}
     {{/each}}
   </ul>

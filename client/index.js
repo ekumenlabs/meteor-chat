@@ -11,7 +11,10 @@ Meteor.Router.add({
 });
 
 Template.users.users = function() {
-  return Meteor.users.find().fetch();
+  return Meteor.users.find({"profile.robot": {$ne: true}}).fetch();
+};
+Template.users.robots = function() {
+  return Meteor.users.find({"profile.robot": true}).fetch();
 };
 
 Template.users.videoDisabled = function() {
@@ -90,8 +93,9 @@ Template.user.online = function() {
 /* ---------------------------------------------------------------------- */
 // Selecting a robot
 
-Template.navbar.selectedRobot = function() {
-  return Session.get('selectedRobot');
+Template.navbar.loggedInAsRobot = function() {
+  var user = Meteor.user();
+  return (user && user.profile.robot);
 };
 
 Template.navbar.events({
@@ -102,17 +106,18 @@ Template.navbar.events({
 });
 
 Template.tabletChoose.robots = function() {
-  return Robots.find().fetch();
+  return Meteor.users.find({profile: {robot: true}}).fetch();
 };
 
-Template.tabletChoose.selectedRobot = function() {
-  return Session.get('selectedRobot');
+Template.tabletChoose.loggedInAsRobot = function() {
+  var user = Meteor.user();
+  return (user && user.profile.robot);
 };
 
 Template.robot.events({
   'mouseup': function() {
-    Session.set('selectedRobot', this.name);
-    Meteor.loginWithPassword(this.name, this.name);
+    Session.set('selectedRobot', this.username);
+    Meteor.loginWithPassword(this.username, this.username);
   },
 });
 
