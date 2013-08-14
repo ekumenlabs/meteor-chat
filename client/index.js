@@ -132,7 +132,7 @@ Template.robotVideo.inVideoChat = function() {
   return Session.get('inVideoChat');
 };
 Template.robotVideo.notInVideoChat = function() {
-  return !Session.get('inVideoChat');
+  return !(Session.get('inVideoChat'));
 };
 
 Template.main.userIsNotRobot = function() {

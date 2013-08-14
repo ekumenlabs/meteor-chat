@@ -58,7 +58,7 @@
 <template name="robotVideo">
   {{> video}}
 
-  <div class="{{notInVideoChat}}">
+  {{#if notInVideoChat}}
     {{#constant}}
     <video class="eyes"
       src="http://babylon1.willowgarage.com/binfrastructure/eyes-cropped.mp4"
@@ -67,7 +67,7 @@
       >
       </video>
     {{/constant}}
-  </div>
+  {{/if}}
 </template>
 
 <template name="users">
