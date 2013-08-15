@@ -44,13 +44,15 @@
   {{#if loggedInAsRobot}}
     {{> robotVideo}}
   {{else}}
-    <h2>Choose a robot:</h2>
+    <h2>Which robot is this running on?</h2>
 
     <ul class="unstyled mobile">
       {{#each robots}}
         {{> robotListitem}}
       {{/each}}
     </ul>
+
+    <div>Humans, sign in using the menu in the upper-right corner.</div>
   {{/if}}
 </template>
 
