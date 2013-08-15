@@ -1,6 +1,5 @@
 /* CSS declarations go here */
 body {
-  padding-top: 50px;
   /* To prevent click-and-drag from selecting text */
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -10,14 +9,8 @@ body {
   user-select: none;
   background: #fcfcfa;
 }
-.starter-template {
-  padding: 40px 15px;
-  text-align: center;
-}
 
-li {
-  padding-top: 10px;
-}
+/* For displaying the list of robots */
 
 .items div {
   display: inline-block;
@@ -79,7 +72,7 @@ li {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Lists */
+/* Lists of robots in the robot chooser */
 
 li a {
   color: #0088cc;

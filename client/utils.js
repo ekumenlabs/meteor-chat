@@ -56,4 +56,7 @@ hasGetUserMedia = function() {
             navigator.mozGetUserMedia || navigator.msGetUserMedia));
 };
 
-
+iAmRobot = function() {
+  var me = Meteor.user();
+  return !!(me.profile.robot);
+};

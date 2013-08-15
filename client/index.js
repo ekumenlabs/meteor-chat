@@ -1,6 +1,7 @@
 // Initialize state variables
 Session.set('myVideoSrc', '');
 Session.set('inVideoChat', false);
+Session.set('chattingWith', null);
 Session.set('selectedRobot', null);
 Session.set('selectedUser', null);
 
@@ -93,6 +94,18 @@ Template.user.online = function() {
 /* ---------------------------------------------------------------------- */
 // Selecting a robot
 
+Template.navbar.title = function() {
+  if (Session.get('inVideoChat') && Session.get('chattingWith')) {
+    var user = Meteor.users.findOne(Session.get('chattingWith'));
+    if (iAmRobot()) {
+      return 'Teleoperated by ' + getFriendlyName(user);
+    } else {
+      return 'Teleoperating ' + getFriendlyName(user);
+    }
+  }
+  return "Telepresence";
+};
+
 Template.navbar.loggedInAsRobot = function() {
   var user = Meteor.user();
   return (user && user.profile.robot);
@@ -105,11 +118,11 @@ Template.navbar.events({
   }
 });
 
-Template.tabletChoose.robots = function() {
+Template.robotView.robots = function() {
   return Meteor.users.find({profile: {robot: true}}).fetch();
 };
 
-Template.tabletChoose.loggedInAsRobot = function() {
+Template.robotView.loggedInAsRobot = function() {
   var user = Meteor.user();
   return (user && user.profile.robot);
 };

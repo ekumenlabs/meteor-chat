@@ -15,7 +15,7 @@
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
-        <a class="brand" href="#">Telepresence</a>
+        <a class="brand" href="#">{{title}}</a>
         <div class="pull-right navbar-text">
           {{#if loggedInAsRobot}}
             Robot tablet for {{currentUser.username}} / <a class="logout"> Change </a>
@@ -36,11 +36,11 @@
       {{> users}}
     {{/if}}
   {{else}}
-    {{> tabletChoose}}
+    {{> robotView}}
   {{/if}}
 </template>
 
-<template name="tabletChoose">
+<template name="robotView">
   {{#if loggedInAsRobot}}
     {{> robotVideo}}
   {{else}}
