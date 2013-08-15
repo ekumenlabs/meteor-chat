@@ -11,14 +11,14 @@ Meteor.Router.add({
   '/tablet': 'tablet'
 });
 
-Template.users.users = function() {
-  return Meteor.users.find({"profile.robot": {$ne: true}}).fetch();
-};
-Template.users.robots = function() {
+/* ---------------------------------------------------------------------- */
+// List of robots
+
+Template.robotList.robots = function() {
   return Meteor.users.find({"profile.robot": true}).fetch();
 };
 
-Template.users.videoDisabled = function() {
+Template.robotList.videoDisabled = function() {
   var selected = Session.get('selected_user');
   if (selected && isOnline(selected) && !Session.equals('selected_user', Meteor.userId())) {
     return "active";
@@ -27,13 +27,13 @@ Template.users.videoDisabled = function() {
   }
 };
 
-Template.users.selectedUser = function() {
+Template.robotList.selectedUser = function() {
   var selected = Session.get('selected_user');
   return (selected && isOnline(selected) && !Session.equals('selected_user', Meteor.userId()));
 };
 
-Template.users.events({
-  'mouseup .user': function() {
+Template.robotList.events({
+  'mouseup .robot': function() {
     if (Session.equals('selected_user', this._id)) {
       Session.set('selected_user', null);
     } else {
@@ -48,6 +48,9 @@ Template.users.events({
     startVideoChat(Session.get('selected_user'), true);
   },
 });
+
+/* ---------------------------------------------------------------------- */
+// Video template
 
 Template.video.inVideoChat = function() {
   return Session.get('inVideoChat') ? 'videochat-show' : 'videochat-hide';
@@ -66,15 +69,15 @@ Template.video.myVideoSrc = function() {
   return Session.get('myVideoSrc');
 };
 
-Template.user.icon = function() {
+Template.robot.icon = function() {
   return getIcon(this, 64);
 };
 
-Template.user.friendlyname = function() {
+Template.robot.friendlyname = function() {
   return getFriendlyName(this);
 };
 
-Template.user.status = function() {
+Template.robot.status = function() {
   var presence = Meteor.presences.findOne({userId: this._id});
   if (presence) {
     return presence.state;
@@ -83,11 +86,11 @@ Template.user.status = function() {
   }
 };
 
-Template.user.selected = function() {
+Template.robot.selected = function() {
   return Session.equals('selected_user', this._id) ? 'selected' : '';
 };
 
-Template.user.online = function() {
+Template.robot.online = function() {
   return isOnline(this._id);
 };
 
@@ -127,7 +130,7 @@ Template.robotView.loggedInAsRobot = function() {
   return (user && user.profile.robot);
 };
 
-Template.robot.events({
+Template.robotListitem.events({
   'mouseup': function() {
     Session.set('selectedRobot', this.username);
     Meteor.loginWithPassword(this.username, this.username);

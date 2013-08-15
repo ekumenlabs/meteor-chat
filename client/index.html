@@ -33,7 +33,7 @@
     {{#if inVideoChat}}
       {{> video}}
     {{else}}
-      {{> users}}
+      {{> robotList}}
     {{/if}}
   {{else}}
     {{> robotView}}
@@ -48,13 +48,13 @@
 
     <ul class="unstyled mobile">
       {{#each robots}}
-        {{> robot}}
+        {{> robotListitem}}
       {{/each}}
     </ul>
   {{/if}}
 </template>
 
-<template name="robot">
+<template name="robotListitem">
 <li class="robot"><a>{{username}}</a>
 </template>
 
@@ -64,20 +64,20 @@
   {{#if notInVideoChat}}
     {{#constant}}
     <video class="eyes"
-      src="/eyes-cropped.mp4"
       loop="loop"
       autoplay="autoplay"
       >
+        <source src="/eyes-cropped.webm" type="video/webm"/>
       </video>
     {{/constant}}
   {{/if}}
 </template>
 
-<template name="users">
+<template name="robotList">
   <h3>Robots:</h3>
-  <ul id="userlist" class="thumbnails items inline big">
+  <ul id="robotlist" class="thumbnails items inline big">
     {{#each robots}}
-      {{> user}}
+      {{> robot}}
     {{/each}}
   </ul>
 
@@ -92,8 +92,8 @@
   {{/if}}
 </template>
 
-<template name="user">
-  <div class="user {{selected}}">
+<template name="robot">
+  <div class="robot {{selected}}">
     <img height="64" width="64" src="{{icon}}"><br>
     {{friendlyname}}<br>
     {{#if online}}
