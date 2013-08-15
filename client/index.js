@@ -151,6 +151,17 @@ Template.robotVideo.notInVideoChat = function() {
   return !(Session.get('inVideoChat'));
 };
 
+Template.robotVideo.events({
+  'touchstart .eyes': function() {
+    var eyes = document.querySelector('.eyes');
+    eyes.play();
+    eyes.loop = false; 
+    eyes.addEventListener('ended', function() { 
+      eyes.currentTime=0.1; eyes.play();
+    }, false);
+  }
+});
+
 Template.main.userIsNotRobot = function() {
   var user = Meteor.user();
   return (user && !user.profile.robot);
