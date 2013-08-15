@@ -139,3 +139,6 @@ Template.main.userIsNotRobot = function() {
   var user = Meteor.user();
   return (user && !user.profile.robot);
 };
+Template.main.inVideoChat = function() {
+  return Session.get('inVideoChat');
+};

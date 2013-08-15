@@ -30,8 +30,11 @@
 
 <template name="main">
   {{#if userIsNotRobot}}
-    {{> users}}
-    {{> video}}
+    {{#if inVideoChat}}
+      {{> video}}
+    {{else}}
+      {{> users}}
+    {{/if}}
   {{else}}
     {{> tabletChoose}}
   {{/if}}
@@ -71,7 +74,7 @@
 </template>
 
 <template name="users">
-  <h3>Users:</h3>
+  <h3>Robots:</h3>
   <ul id="userlist" class="thumbnails items inline big">
     {{#each robots}}
       {{> user}}
